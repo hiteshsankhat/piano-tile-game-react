@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 
 interface Point {
   x: number;
@@ -105,7 +105,28 @@ const CanvasGameBoard = () => {
     };
     animate();
   }, []);
-  return <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} />;
+
+  const handleClick = (e: any) => {
+    const clickPosition = { x: e.clientX, y: e.clientY };
+    tiles.current.forEach((tile) => {
+      if (
+        tile.x < clickPosition.x &&
+        tile.x + tile.w > clickPosition.x &&
+        tile.y < clickPosition.y &&
+        tile.x + tile.w > clickPosition.y
+      ) {
+        tile.color = "gray";
+      }
+    });
+  };
+  return (
+    <canvas
+      ref={canvasRef}
+      width={canvasWidth}
+      height={canvasHeight}
+      onClick={handleClick}
+    />
+  );
 };
 
 export default CanvasGameBoard;
