@@ -1,0 +1,18 @@
+.board {
+    position: absolute;
+    width: min(100vw, 400px);
+    height: min(95vh, 650px);
+    background-color: lightblue;
+    bottom: 0;
+    grid-template-columns: repeat(auto-fill, minmax(calc(min(100vw, 400px) / 4), 1fr));
+
+    display: grid;
+    margin: auto;
+
+    .line {
+        margin: 0 auto;
+        width: 100%;
+        border-inline: 0.5px solid black;
+        position: relative;
+    }
+}
