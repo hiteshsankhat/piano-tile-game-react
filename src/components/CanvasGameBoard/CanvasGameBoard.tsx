@@ -106,8 +106,8 @@ const CanvasGameBoard = () => {
     animate();
   }, []);
 
-  const handleClick = (e: any) => {
-    const clickPosition = { x: e.clientX, y: e.clientY };
+  const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+    const clickPosition: Point = { x: e.clientX, y: e.clientY };
     tiles.current.forEach((tile) => {
       if (
         tile.x < clickPosition.x &&
