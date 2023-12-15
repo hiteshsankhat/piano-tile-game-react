@@ -1,4 +1,5 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 
 interface Point {
   x: number;
@@ -14,16 +15,29 @@ interface Box {
 
 interface Tile extends Box {
   color: "black" | "gray";
+  id: string;
 }
 
-const CanvasGameBoard = () => {
+type CanvasGameBoardProps = {
+  isStarted: boolean;
+  updateStartStatus: any;
+};
+
+let SPEED = 0.5;
+
+const CanvasGameBoard = ({
+  isStarted,
+  updateStartStatus,
+}: CanvasGameBoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const canvasWidth = window.innerWidth; // Math.min(window.innerWidth * 0.95, 450);
-  const canvasHeight = window.innerHeight; // Math.min(window.innerHeight, 600);
+  const canvasWidth = Math.min(window.innerWidth * 0.95, 450);
+  const canvasHeight = Math.min(window.innerHeight, 600);
+
+  const [score, setScore] = useState(0);
 
   const tiles = useRef<Tile[]>([]);
-
-  useEffect(() => {
+  let requestAnimationFrameId = useRef(0);
+  const gameLogic = () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const context = canvas.getContext("2d");
@@ -82,50 +96,93 @@ const CanvasGameBoard = () => {
         w: blockWidth - 10,
         h: 100,
         color: "black",
+        id: uuidv4(),
       });
     };
 
     const animate = () => {
       let minHeight = Infinity;
       tiles.current.forEach((tile) => {
-        tile.y += 0.5;
+        tile.y += SPEED;
         minHeight = Math.min(minHeight, tile.y);
       });
       if (minHeight > 105) {
         minHeight = Infinity;
         addTile();
       }
+      const lastTile = tiles.current.filter(
+        (x: Tile) => x.y >= canvasHeight - 105
+      );
+      if (lastTile.length > 0 && lastTile[0].color !== "gray") {
+        cancelAnimationFrame(requestAnimationFrameId.current);
+        tiles.current = [];
+        return;
+      }
       tiles.current = tiles.current.filter(
         (x: Tile) => x.y < canvasHeight - 105
       );
       if (tiles.current) {
         draw();
-        requestAnimationFrame(animate);
+        requestAnimationFrameId.current = requestAnimationFrame(animate);
       }
     };
     animate();
-  }, []);
+  };
+
+  useEffect(() => {
+    tiles.current = [];
+    setScore(0);
+    gameLogic();
+    if (!isStarted) {
+      cancelAnimationFrame(requestAnimationFrameId.current);
+      updateStartStatus();
+    }
+  }, [isStarted]);
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
-    const clickPosition: Point = { x: e.clientX, y: e.clientY };
-    tiles.current.forEach((tile) => {
+    if (!canvasRef.current) return;
+    const clickPosition: Point = {
+      x: e.clientX - canvasRef.current.getBoundingClientRect().left,
+      y: e.clientY - canvasRef.current.getBoundingClientRect().top,
+    };
+    let isTileClicked = false;
+    const copiedTiles: Tile[] = JSON.parse(JSON.stringify(tiles.current));
+    copiedTiles.forEach((tile) => {
       if (
-        tile.x < clickPosition.x &&
-        tile.x + tile.w > clickPosition.x &&
-        tile.y < clickPosition.y &&
-        tile.x + tile.w > clickPosition.y
+        clickPosition.x >= tile.x &&
+        clickPosition.x <= tile.x + tile.w &&
+        clickPosition.y >= tile.y &&
+        clickPosition.y <= tile.y + tile.h
       ) {
-        tile.color = "gray";
+        const selectedTile = tiles.current.filter((x) => x.id === tile.id)[0];
+        selectedTile.color = "gray";
+        isTileClicked = true;
       }
     });
+    if (isTileClicked) {
+      setScore((prev) => {
+        if ((prev + 1) % 5 == 0) {
+          SPEED += 0.25;
+        }
+        return prev + 1;
+      });
+    } else {
+      setScore(0);
+      SPEED = 0.5;
+      cancelAnimationFrame(requestAnimationFrameId.current);
+      updateStartStatus();
+    }
   };
   return (
-    <canvas
-      ref={canvasRef}
-      width={canvasWidth}
-      height={canvasHeight}
-      onClick={handleClick}
-    />
+    <>
+      <p className="score-count">{score}</p>
+      <canvas
+        ref={canvasRef}
+        width={canvasWidth}
+        height={canvasHeight}
+        onClick={handleClick}
+      />
+    </>
   );
 };
 

@@ -1,6 +1,29 @@
 .main-container {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end;
     height: 100vh;
-    align-items: flex-end;
+    align-items: center;
+
+    .score-count {
+        align-self: center;
+        justify-self: center;
+        font-size: large;
+    }
+
+    .start-btn {
+        all: unset;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100px;
+        font-size: 50px;
+        width: 100vw;
+        height: 100vh;
+        background-color: black;
+        color: white;
+        text-align: center;
+        opacity: 0.5;
+    }
 }
