@@ -89,7 +89,7 @@ const CanvasGameBoard = ({
 
     const addTile = () => {
       const selectedIndex = Math.floor(Math.random() * blocks.length);
-      const { x, y, w, h } = blocks[selectedIndex];
+      const { x } = blocks[selectedIndex];
       tiles.current.push({
         x: x + 5,
         y: 0,
