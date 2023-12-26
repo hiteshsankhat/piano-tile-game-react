@@ -1,5 +1,6 @@
 import { Block, Point, Tile } from "../types/types";
 import { v4 as uuidv4 } from "uuid";
+import { TILE_HEIGHT, TILE_OFFSET } from "./constants";
 
 const drawLine = (
   context: CanvasRenderingContext2D,
@@ -55,6 +56,11 @@ export const getBlockArray = (
   }));
 };
 
+export const getTileHeightWithOffset = (shouldAddOffset = true) => {
+  if (shouldAddOffset) return TILE_HEIGHT + TILE_OFFSET;
+  return TILE_HEIGHT;
+};
+
 export const createTile = (blocks: Block[]): Tile => {
   const selectedIndex = Math.floor(Math.random() * blocks.length);
   const { x, w } = blocks[selectedIndex];
@@ -62,7 +68,7 @@ export const createTile = (blocks: Block[]): Tile => {
     x: x + 5,
     y: 0,
     w: w - 10,
-    h: 100,
+    h: getTileHeightWithOffset(false),
     color: "black",
     id: uuidv4(),
   };
@@ -84,21 +90,27 @@ export const checkTileCollision = (
   tiles: Tile[],
   canvasHeight: number
 ): Tile[] => {
-  return tiles.filter((x: Tile) => x.y < canvasHeight - 105);
+  return tiles.filter(
+    (x: Tile) => x.y < canvasHeight - getTileHeightWithOffset()
+  );
 };
 
 export const getLastTile = (
   tiles: Tile[],
   canvasHeight: number
 ): Tile | undefined => {
-  return tiles.find((tile: Tile) => tile.y >= canvasHeight - 105);
+  return tiles.find(
+    (tile: Tile) => tile.y >= canvasHeight - getTileHeightWithOffset()
+  );
 };
 
 export const removeOffscreenTiles = (
   tiles: Tile[],
   canvasHeight: number
 ): Tile[] => {
-  return tiles.filter((x: Tile) => x.y < canvasHeight - 105);
+  return tiles.filter(
+    (x: Tile) => x.y < canvasHeight - getTileHeightWithOffset()
+  );
 };
 
 export const isPointInsideTile = (point: Point, tile: Tile): boolean => {

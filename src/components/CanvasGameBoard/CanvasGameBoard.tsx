@@ -6,14 +6,18 @@ import {
   getBlockArray,
   getClickPosition,
   getLastTile,
+  getTileHeightWithOffset,
   isPointInsideTile,
   moveTiles,
   removeOffscreenTiles,
   renderCanvas,
 } from "../../utils/helpers";
-import { NUMBER_OF_BLOCK } from "../../utils/constants";
+import {
+  NUMBER_OF_BLOCK,
+  SPEED as defaultMovingSpeed,
+} from "../../utils/constants";
 
-let SPEED = 0.5;
+let SPEED = defaultMovingSpeed;
 
 const CanvasGameBoard = ({
   isStarted,
@@ -43,7 +47,7 @@ const CanvasGameBoard = ({
 
     tiles.current = checkTileCollision(tiles.current, canvasHeight);
 
-    if (minHeight > 105) {
+    if (minHeight > getTileHeightWithOffset()) {
       minHeight = Infinity;
       addTile();
     }
@@ -96,7 +100,7 @@ const CanvasGameBoard = ({
         isTileClicked = true;
       }
     });
-    
+
     if (isTileClicked) {
       setScore((prev) => {
         if ((prev + 1) % 5 == 0) {
@@ -106,7 +110,7 @@ const CanvasGameBoard = ({
       });
     } else {
       setScore(0);
-      SPEED = 0.5;
+      SPEED = defaultMovingSpeed;
       cancelAnimationFrame(requestAnimationFrameId.current);
       updateStartStatus();
     }
