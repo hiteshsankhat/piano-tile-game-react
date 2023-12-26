@@ -1,8 +1,13 @@
+::root {
+    --screen-width: 100dvw;
+    --screen-height: 100dvh;
+}
+
 .main-container {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    height: 100vh;
+    height: var(--screen-height, 100dvh);
     align-items: center;
 
     .score-count {
@@ -19,8 +24,8 @@
         transform: translate(-50%, -50%);
         width: 100px;
         font-size: 50px;
-        width: 100vw;
-        height: 100vh;
+        width: var(--screen-width, 100dvw);
+        height: var(--screen-height, 100dvh);
         background-color: black;
         color: white;
         text-align: center;
