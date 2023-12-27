@@ -30,7 +30,7 @@ export const renderCanvas = (
   tiles: Tile[]
 ) => {
   context.clearRect(0, 0, canvasWidth, canvasHeight);
-  context.fillStyle = "lightblue";
+  context.fillStyle = "#E5B8F4";
   context.fillRect(0, 0, canvasWidth, canvasHeight);
 
   blocks.forEach((block) => {
@@ -69,8 +69,9 @@ export const createTile = (blocks: Block[]): Tile => {
     y: 0,
     w: w - 10,
     h: getTileHeightWithOffset(false),
-    color: "black",
+    color: "#2D033B",
     id: uuidv4(),
+    isClicked: false,
   };
 };
 

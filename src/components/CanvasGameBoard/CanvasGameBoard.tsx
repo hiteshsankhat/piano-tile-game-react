@@ -53,7 +53,7 @@ const CanvasGameBoard = ({
     }
     const lastTile = getLastTile(tiles.current, canvasHeight);
 
-    if (lastTile && lastTile.color !== "gray") {
+    if (lastTile && !lastTile.isClicked) {
       cancelAnimationFrame(requestAnimationFrameId.current);
       tiles.current = [];
       return;
@@ -96,7 +96,8 @@ const CanvasGameBoard = ({
     copiedTiles.forEach((tile) => {
       if (clickPosition && isPointInsideTile(clickPosition, tile)) {
         const selectedTile = tiles.current.filter((x) => x.id === tile.id)[0];
-        selectedTile.color = "gray";
+        selectedTile.color = "#810CA8";
+        selectedTile.isClicked = true;
         isTileClicked = true;
       }
     });

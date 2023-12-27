@@ -11,8 +11,9 @@ export interface Block {
 }
 
 export interface Tile extends Block {
-  color: "black" | "gray";
+  color: string;
   id: string;
+  isClicked: boolean;
 }
 
 export type CanvasGameBoardProps = {
