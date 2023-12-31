@@ -81,7 +81,7 @@ const CanvasGameBoard = ({
 
   useEffect(() => {
     tiles.current = [];
-    setScore(0);
+    // setScore(0);
     gameLogic();
     if (!isStarted) {
       cancelAnimationFrame(requestAnimationFrameId.current);
@@ -111,7 +111,7 @@ const CanvasGameBoard = ({
         return prev + 1;
       });
     } else {
-      setScore(0);
+      // setScore(0);
       SPEED = defaultMovingSpeed;
       cancelAnimationFrame(requestAnimationFrameId.current);
       updateStartStatus();

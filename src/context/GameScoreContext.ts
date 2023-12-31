@@ -5,7 +5,7 @@ type GameScoreContextType = {
 };
 
 const defaultValue: GameScoreContextType = {
-  score: 0,
+  score: -1,
   setScore: () => {},
 };
 
