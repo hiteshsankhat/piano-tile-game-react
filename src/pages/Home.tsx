@@ -1,8 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import CanvasGameBoard from "../components/CanvasGameBoard/CanvasGameBoard";
 import "./Home.scss";
+import GameScoreContext from "../context/GameScoreContext";
+
 function Home() {
   const [isStarted, setIsStarted] = useState(false);
+  const { score } = useContext(GameScoreContext);
   const updateStartStatus = () => {
     setIsStarted(false);
   };

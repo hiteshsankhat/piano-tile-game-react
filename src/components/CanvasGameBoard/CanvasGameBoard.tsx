@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import { Block, CanvasGameBoardProps, Tile, Point } from "../../types/types";
 import {
   checkTileCollision,
@@ -16,6 +16,7 @@ import {
   NUMBER_OF_BLOCK,
   SPEED as defaultMovingSpeed,
 } from "../../utils/constants";
+import GameScoreContext from "../../context/GameScoreContext";
 
 let SPEED = defaultMovingSpeed;
 
@@ -24,7 +25,7 @@ const CanvasGameBoard = ({
   updateStartStatus,
 }: CanvasGameBoardProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [score, setScore] = useState(0);
+  const { score, setScore } = useContext(GameScoreContext);
   const tiles = useRef<Tile[]>([]);
   const requestAnimationFrameId = useRef(0);
 
