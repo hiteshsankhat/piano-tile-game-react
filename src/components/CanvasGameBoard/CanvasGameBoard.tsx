@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef } from "react";
 import { Block, CanvasGameBoardProps, Tile, Point } from "../../types/types";
 import {
-  checkTileCollision,
   createTile,
   getBlockArray,
   getClickPosition,
@@ -46,19 +45,18 @@ const CanvasGameBoard = ({
 
     minHeight = moveTiles(tiles.current, minHeight, SPEED);
 
-    tiles.current = checkTileCollision(tiles.current, canvasHeight);
-
     if (minHeight > getTileHeightWithOffset()) {
       minHeight = Infinity;
       addTile();
     }
     const lastTile = getLastTile(tiles.current, canvasHeight);
-
     if (lastTile && !lastTile.isClicked) {
       cancelAnimationFrame(requestAnimationFrameId.current);
       tiles.current = [];
+      updateStartStatus();
       return;
     }
+    // tiles.current = checkTileCollision(tiles.current, canvasHeight);
 
     tiles.current = removeOffscreenTiles(tiles.current, canvasHeight);
 

@@ -15,7 +15,9 @@ function Home() {
   );
   const { score, setScore } = useContext(GameScoreContext);
   const updateStartStatus = () => {
-    setGameStatus(GameStatus.RESTARTED);
+    if (gameStatus === GameStatus.STARTED) {
+      setGameStatus(GameStatus.RESTARTED);
+    }
   };
 
   const getButtonText = () => {
