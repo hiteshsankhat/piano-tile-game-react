@@ -2,12 +2,9 @@ import { useContext, useState } from "react";
 import CanvasGameBoard from "../components/CanvasGameBoard/CanvasGameBoard";
 import "./Home.scss";
 import GameScoreContext from "../context/GameScoreContext";
+import { GameStatus } from "../enums/enums";
 
-enum GameStatus {
-  NOT_STARTED = 0,
-  STARTED = 1,
-  RESTARTED = 2,
-}
+
 
 function Home() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(

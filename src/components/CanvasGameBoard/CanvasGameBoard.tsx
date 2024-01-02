@@ -16,6 +16,7 @@ import {
   SPEED as defaultMovingSpeed,
 } from "../../utils/constants";
 import GameScoreContext from "../../context/GameScoreContext";
+import { TileClickState } from "../../enums/enums";
 
 let SPEED = defaultMovingSpeed;
 
@@ -89,30 +90,31 @@ const CanvasGameBoard = ({
 
   const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
     if (!canvasRef.current) return;
-    let isTileClicked = false;
+    let isTileClicked = TileClickState.NOT_CLICKED;
     const clickPosition: Point | null = getClickPosition(e, canvasRef.current);
     const copiedTiles: Tile[] = JSON.parse(JSON.stringify(tiles.current));
     copiedTiles.forEach((tile) => {
       if (clickPosition && isPointInsideTile(clickPosition, tile)) {
         const selectedTile = tiles.current.filter((x) => x.id === tile.id)[0];
         selectedTile.color = "#810CA8";
+        isTileClicked = selectedTile.isClicked
+          ? TileClickState.ALREADY_CLICKED
+          : TileClickState.CLICKED;
         selectedTile.isClicked = true;
-        isTileClicked = true;
       }
     });
 
-    if (isTileClicked) {
+    if (isTileClicked === TileClickState.NOT_CLICKED) {
+      SPEED = defaultMovingSpeed;
+      cancelAnimationFrame(requestAnimationFrameId.current);
+      updateStartStatus();
+    } else if (isTileClicked === TileClickState.CLICKED) {
       setScore((prev) => {
         if ((prev + 1) % 5 == 0) {
           SPEED += 0.25;
         }
         return prev + 1;
       });
-    } else {
-      // setScore(0);
-      SPEED = defaultMovingSpeed;
-      cancelAnimationFrame(requestAnimationFrameId.current);
-      updateStartStatus();
     }
   };
   return (
