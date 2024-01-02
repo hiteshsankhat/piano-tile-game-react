@@ -1,6 +1,6 @@
 import { Block, Point, Tile } from "../types/types";
 import { v4 as uuidv4 } from "uuid";
-import { TILE_HEIGHT, TILE_OFFSET } from "./constants";
+import { COLORS, TILE_HEIGHT, TILE_OFFSET } from "./constants";
 
 const drawLine = (
   context: CanvasRenderingContext2D,
@@ -22,6 +22,17 @@ const drawTile = (context: CanvasRenderingContext2D, tile: Tile) => {
   context.fillRect(tile.x, tile.y, tile.w, tile.h);
 };
 
+export const drawCanvas = (
+  context: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
+  fillColor: string
+) => {
+  context.clearRect(0, 0, canvasWidth, canvasHeight);
+  context.fillStyle = fillColor;
+  context.fillRect(0, 0, canvasWidth, canvasHeight);
+};
+
 export const renderCanvas = (
   context: CanvasRenderingContext2D,
   canvasWidth: number,
@@ -29,10 +40,7 @@ export const renderCanvas = (
   blocks: Block[],
   tiles: Tile[]
 ) => {
-  context.clearRect(0, 0, canvasWidth, canvasHeight);
-  context.fillStyle = "#E5B8F4";
-  context.fillRect(0, 0, canvasWidth, canvasHeight);
-
+  drawCanvas(context, canvasWidth, canvasHeight, COLORS.gameBoardBgColor);
   blocks.forEach((block) => {
     drawLine(context, block.x + block.w, 0, block.x + block.w, block.h);
   });
@@ -69,7 +77,7 @@ export const createTile = (blocks: Block[]): Tile => {
     y: 0,
     w: w - 10,
     h: getTileHeightWithOffset(false),
-    color: "#2D033B",
+    color: COLORS.tileColor,
     id: uuidv4(),
     isClicked: false,
   };

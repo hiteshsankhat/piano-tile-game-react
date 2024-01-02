@@ -4,8 +4,6 @@ import "./Home.scss";
 import GameScoreContext from "../context/GameScoreContext";
 import { GameStatus } from "../enums/enums";
 
-
-
 function Home() {
   const [gameStatus, setGameStatus] = useState<GameStatus>(
     GameStatus.NOT_STARTED

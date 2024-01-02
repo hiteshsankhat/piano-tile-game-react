@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useRef } from "react";
 import { Block, CanvasGameBoardProps, Tile, Point } from "../../types/types";
 import {
   createTile,
+  drawCanvas,
   getBlockArray,
   getClickPosition,
   getLastTile,
@@ -12,6 +13,7 @@ import {
   renderCanvas,
 } from "../../utils/helpers";
 import {
+  COLORS,
   NUMBER_OF_BLOCK,
   SPEED as defaultMovingSpeed,
 } from "../../utils/constants";
@@ -28,6 +30,7 @@ const CanvasGameBoard = ({
   const { score, setScore } = useContext(GameScoreContext);
   const tiles = useRef<Tile[]>([]);
   const requestAnimationFrameId = useRef(0);
+  const requestAnimationFrameIdForError = useRef(0);
 
   const canvasWidth = Math.min(window.innerWidth * 0.95, 450);
   const canvasHeight = window.innerHeight - 50;
@@ -52,9 +55,8 @@ const CanvasGameBoard = ({
     }
     const lastTile = getLastTile(tiles.current, canvasHeight);
     if (lastTile && !lastTile.isClicked) {
-      cancelAnimationFrame(requestAnimationFrameId.current);
       tiles.current = [];
-      updateStartStatus();
+      errorAnimation();
       return;
     }
     // tiles.current = checkTileCollision(tiles.current, canvasHeight);
@@ -74,17 +76,52 @@ const CanvasGameBoard = ({
     if (!canvas) return;
     const context = canvas.getContext("2d");
     if (!context) return;
-    addTile();
-    animate(context);
+    renderCanvas(context, canvasWidth, canvasHeight, blocks, tiles.current);
+    if (isStarted) {
+      animate(context);
+    }
+  };
+
+  const resetGame = () => {
+    cancelAnimationFrame(requestAnimationFrameId.current);
+    cancelAnimationFrame(requestAnimationFrameIdForError.current);
+    updateStartStatus();
+  };
+
+  const errorAnimation = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const context = canvas.getContext("2d");
+    if (!context) return;
+    let isVisible = true;
+    let lastTime = performance.now();
+    const draw = () => {
+      const currentTime = performance.now();
+      const elapsedTime = currentTime - lastTime;
+      if (elapsedTime > 100) {
+        drawCanvas(
+          context,
+          canvasWidth,
+          canvasHeight,
+          isVisible ? COLORS.errorBlinkColorOne : COLORS.errorBlinkColorTwo
+        );
+        isVisible = !isVisible;
+        lastTime = currentTime;
+      }
+      requestAnimationFrameIdForError.current = requestAnimationFrame(draw);
+    };
+    requestAnimationFrameIdForError.current = requestAnimationFrame(draw);
+    setTimeout(() => {
+      resetGame();
+      cancelAnimationFrame(requestAnimationFrameIdForError.current);
+    }, 1000);
   };
 
   useEffect(() => {
     tiles.current = [];
-    // setScore(0);
     gameLogic();
     if (!isStarted) {
-      cancelAnimationFrame(requestAnimationFrameId.current);
-      updateStartStatus();
+      resetGame();
     }
   }, [isStarted]);
 
@@ -96,7 +133,7 @@ const CanvasGameBoard = ({
     copiedTiles.forEach((tile) => {
       if (clickPosition && isPointInsideTile(clickPosition, tile)) {
         const selectedTile = tiles.current.filter((x) => x.id === tile.id)[0];
-        selectedTile.color = "#810CA8";
+        selectedTile.color = COLORS.selectedTileColor;
         isTileClicked = selectedTile.isClicked
           ? TileClickState.ALREADY_CLICKED
           : TileClickState.CLICKED;
@@ -107,7 +144,7 @@ const CanvasGameBoard = ({
     if (isTileClicked === TileClickState.NOT_CLICKED) {
       SPEED = defaultMovingSpeed;
       cancelAnimationFrame(requestAnimationFrameId.current);
-      updateStartStatus();
+      errorAnimation();
     } else if (isTileClicked === TileClickState.CLICKED) {
       setScore((prev) => {
         if ((prev + 1) % 5 == 0) {
